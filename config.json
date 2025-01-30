@@ -1,0 +1,26 @@
+{
+  "ldap": {
+    "address": "ldap://localhost", // will use port 389
+    "user": "service-user",
+    "password": "secret-password"
+  },
+  "ipa": {
+    "domain": "some.domain.org"
+  },
+  "scrape": {
+    "interval": 60
+  },
+  "server": {
+    "active": false,
+    "address": "localhost",
+    "port": "9496"
+  },
+  "log": {
+    "level": "debug",
+    "json": true
+  },
+  "export": {
+    "file": "/var/lib/node_exporter/textfile_collector/metrics.prom",
+    "interval": 300
+  }
+}

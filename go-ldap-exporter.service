@@ -1,0 +1,16 @@
+[Unit]
+Description="A Prometheus exporter for LDAP servers"
+Wants=nework.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/go-ldap-metrics-exporter/go-ldap-metrics-exporter -c /opt/go-ldap-metrics-exporter/config.toml
+Restart=on-failure
+RestartSec=10
+KillMode=process
+User=go-ldap-metrics-exporter
+Group=go-ldap-metrics-exporter
+
+[Install]
+WantedBy=multi-user.target

@@ -10,7 +10,7 @@ go-ldap-metrics-exporter can be downloaded from github:
 git clone https://github.com/adisve/go-ldap-metrics-exporter.git
 ```
 
-## Installation
+## Usage
 
 The go-ldap-metrics-exporter executable can be run from any directory. It is recommended to place the executable in the ´/opt/go-ldap-metrics-exporter/´ directory, along with its configuration file. The configuration flie is a .json file, and can be named anything, but its path must be provided to the executable using the `-c/--config` flag.
 

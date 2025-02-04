@@ -1,6 +1,7 @@
 package exporter
 
 import (
+	"fmt"
 	"go-ldap-metrics-exporter/internal/pkg/app"
 	"go-ldap-metrics-exporter/internal/pkg/structs"
 	"time"
@@ -12,8 +13,9 @@ func Start(config *structs.Config) {
 	log.Infof("starting go-ldap-metrics-exporter using LDAP address %s", config.LDAP.Address)
 
 	if config.Server.Active {
-		log.Infof("starting prometheus HTTP metrics server on %s", config.Server.Port)
-		metricsServer := app.StartServer(config.Server.Port, "/metrics")
+		serverAddrFull := fmt.Sprintf("%s:%s", config.Server.Address, config.Server.Port)
+		log.Infof("starting prometheus HTTP metrics server on %s", serverAddrFull)
+		metricsServer := app.StartServer(serverAddrFull, "/metrics")
 		defer app.StopServer(metricsServer)
 	}
 

@@ -25,6 +25,7 @@ func Execute() {
 
 	var configPath string
 	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "Path to the config file. (--config/-c)")
+	rootCmd.MarkPersistentFlagRequired("config")
 
 	common.ViperLoadConfig(configPath, &config)
 	common.SetLogLevel(config.Log.Level, config.Log.JSON)

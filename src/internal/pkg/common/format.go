@@ -8,6 +8,6 @@ func IpaDomainToBaseDN(domain string) string {
 
 // function to use Ldap.User (for example "admin")
 // and for example generate string "cn=admin,dc=example,dc=com"
-func UserWithBaseDN(user string, domain string) string {
-	return "cn=" + user + "," + IpaDomainToBaseDN(domain)
+func UserWithBaseDN(user string, baseDN string) string {
+	return "cn=" + user + "," + baseDN
 }

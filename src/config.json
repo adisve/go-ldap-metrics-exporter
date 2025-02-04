@@ -1,0 +1,26 @@
+{
+  "ldap": {
+    "address": "ldap://localhost",
+    "user": "admin",
+    "password": "admin"
+  },
+  "ipa": {
+    "domain": "local.domain.com"
+  },
+  "scrape": {
+    "interval": 60
+  },
+  "server": {
+    "active": true,
+    "address": "localhost",
+    "port": "9496"
+  },
+  "log": {
+    "level": "info",
+    "json": true
+  },
+  "export": {
+    "file": "/Users/adisveletanlic/git/go-ldap-exporter/.docker/textfile_collector/metrics.prom",
+    "interval": 300
+  }
+}

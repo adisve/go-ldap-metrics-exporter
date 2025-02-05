@@ -27,20 +27,23 @@ sudo chown -R go-ldap-metrics-exporter:go-ldap-metrics-exporter /opt/go-ldap-met
 
 The go-ldap-metrics-exporter service can then be started using the service file provided in the repository. The service file is named `go-ldap-metrics-exporter.service`.
 
+
 ## Configuration
 
-The configuration file is a .json file, and must contain the following fields:
+`go-ldap-exporter` expects a .json file, and can be named anything, but its path must be provided to the executable using the `-c/--config` flag.
+
+An example configuration could look like this
 
 ```json
 {
   "ldap": {
-    "address": "ldap://localhost",
-    "fullDn": "uid=<service-user-account>,ou=<org-unit-of-service-user>,dc=local,dc=domain,dc=com",
-    "baseDn": "dc=local,dc=domain,dc=com",
-    "password": "admin"
+    "address": "ldap://localhost", // could also be ldaps://, will use port 389 or 636 respectively
+    "username": "<service-user-username>",
+    "password": "<service-user-password>",
+    "baseDn": "dc=nonp,dc=dp,dc=dig,dc=nchosting,dc=dk",
   },
   "scrape": {
-    "interval": 60
+    "interval": 30 // interval for the server, not the exporter
   },
   "server": {
     "active": true,
@@ -49,11 +52,10 @@ The configuration file is a .json file, and must contain the following fields:
   },
   "log": {
     "level": "info",
-    "json": true
+    "json": false
   },
   "export": {
-    "file": "/home/adve/go-ldap-metrics-exporter/textfile_collector/metrics.prom",
+    "file": "/var/lib/node_exporter/textfile_collector/metrics.prom",
     "interval": 300
   }
 }
-```

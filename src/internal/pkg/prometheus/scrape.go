@@ -69,7 +69,7 @@ func scrapeAllMetrics(config *structs.Config) error {
 	}
 	defer l.Close()
 
-	fullDn := fmt.Sprintf("uid=%s,%s", config.LDAP.Username, config.LDAP.UserBaseDN)
+	fullDn := fmt.Sprintf("uid=%s,%s", config.LDAP.Username, config.LDAP.BaseDN)
 	log.Debugf("Connecting to %s as %s", config.LDAP.Address, fullDn)
 
 	if err := l.Bind(fullDn, config.LDAP.Password); err != nil {

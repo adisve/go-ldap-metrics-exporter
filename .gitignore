@@ -1,5 +1,5 @@
-389ds_exporter
 .build
-.tarballs
 bin
 .vscode
+config.*
+.docker

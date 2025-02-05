@@ -26,3 +26,34 @@ sudo chown -R go-ldap-metrics-exporter:go-ldap-metrics-exporter /opt/go-ldap-met
 ```
 
 The go-ldap-metrics-exporter service can then be started using the service file provided in the repository. The service file is named `go-ldap-metrics-exporter.service`.
+
+## Configuration
+
+The configuration file is a .json file, and must contain the following fields:
+
+```json
+{
+  "ldap": {
+    "address": "ldap://localhost",
+    "fullDn": "uid=<service-user-account>,ou=<org-unit-of-service-user>,dc=local,dc=domain,dc=com",
+    "baseDn": "dc=local,dc=domain,dc=com",
+    "password": "admin"
+  },
+  "scrape": {
+    "interval": 60
+  },
+  "server": {
+    "active": true,
+    "address": "localhost",
+    "port": "9496"
+  },
+  "log": {
+    "level": "info",
+    "json": true
+  },
+  "export": {
+    "file": "/home/adve/go-ldap-metrics-exporter/textfile_collector/metrics.prom",
+    "interval": 300
+  }
+}
+```

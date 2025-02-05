@@ -7,7 +7,6 @@ type Config struct {
 		Password   string `json:"password"`
 		BaseDN     string `json:"baseDn"`
 		UserBaseDN string `json:"userBaseDn"`
-		Port       string `json:"port"`
 	} `json:"ldap"`
 	Scrape struct {
 		Interval int `json:"interval"`

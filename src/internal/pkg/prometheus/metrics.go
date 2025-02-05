@@ -1,7 +1,6 @@
 package prometheus
 
 import (
-	"fmt"
 	"go-ldap-metrics-exporter/internal/pkg/common"
 	"go-ldap-metrics-exporter/internal/pkg/ldap"
 
@@ -10,69 +9,73 @@ import (
 )
 
 type Metric struct {
-	Name       string
-	QueryFunc  func(*ext_ldap.Conn, string, *prometheus.GaugeVec, string)
-	Gauge      *prometheus.GaugeVec
-	LabelValue string
+	Name   string
+	Gauge  *prometheus.GaugeVec
+	Suffix string
 }
 
-/**
- * Metrics to scrape from the LDAP server.
- */
-var metrics = []Metric{
-	{"people", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectSubordinateMetrics(l, fmt.Sprintf("ou=people,%s", suffix), "(objectClass=organizationalUnit)", gauge, label)
-	}, common.UsersGauge, "active"},
+func collectMetric(l *ext_ldap.Conn, metric Metric) {
+	ldap.CollectMonitorMetrics(l, metric.Suffix, metric.Name, metric.Gauge)
+}
 
-	{"groups", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectSubordinateMetrics(l, fmt.Sprintf("ou=groups,%s", suffix), "(objectClass=organizationalUnit)", gauge, label)
-	}, common.GroupsGauge, ""},
+var replication_metrics = []Metric{
 
-	{"replication_conflicts", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectReplicationMetrics(l, suffix, gauge)
-	}, common.ReplicationConflictsGauge, ""},
+	/* cn=replication,cn=monitor */
+	{"replicationconflicts", common.ReplicationConflictsGauge, "cn=replication,cn=monitor"},
+	{"replicationstatus", common.ReplicationStatusGauge, "cn=replication,cn=monitor"},
+}
 
-	{"replication_status", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectReplicationMetrics(l, suffix, gauge)
-	}, common.ReplicationStatusGauge, ""},
+var monitor_metrics = []Metric{
 
-	{"readwaiters", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "readwaiters", gauge)
-	}, common.ReadWaitersGauge, ""},
+	/* cn=monitor */
+	{"currentconnections", common.CurrentConnectionsGauge, "cn=monitor"},
+	{"totalconnections", common.TotalConnectionsGauge, "cn=monitor"},
+	{"currentconnectionsatmaxthreads", common.CurrentConnectionsAtMaxThreadsGauge, "cn=monitor"},
+	{"maxthreadsperconnhits", common.MaxThreadsPerConnHitsGauge, "cn=monitor"},
+	{"dtablesize", common.DTableSizeGauge, "cn=monitor"},
+	{"readwaiters", common.ReadWaitersGauge, "cn=monitor"},
+	{"opsinitiated", common.OpsInitiatedGauge, "cn=monitor"},
+	{"opscompleted", common.OpsCompletedGauge, "cn=monitor"},
+	{"entriessent", common.EntriesSentGauge, "cn=monitor"},
+	{"bytessent", common.BytesSentGauge, "cn=monitor"},
+	{"currenttime", common.CurrentTimeGauge, "cn=monitor"},
+	{"starttime", common.StartTimeGauge, "cn=monitor"},
+	{"nbackends", common.NBackendsGauge, "cn=monitor"},
 
-	{"dtablesize", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "dtablesize", gauge)
-	}, common.DTableSizeGauge, ""},
+	/* cn=snmp,cn=monitor */
+	{"anonymousbinds", common.AnonymousBindsGauge, "cn=snmp,cn=monitor"},
+	{"unauthbinds", common.UnauthBindsGauge, "cn=snmp,cn=monitor"},
+	{"simpleauthbinds", common.SimpleAuthBindsGauge, "cn=snmp,cn=monitor"},
+	{"strongauthbinds", common.StrongAuthBindsGauge, "cn=snmp,cn=monitor"},
+	{"bindsecurityerrors", common.BindSecurityErrorsGauge, "cn=snmp,cn=monitor"},
+	{"inops", common.InOpsGauge, "cn=snmp,cn=monitor"},
+	{"listops", common.ListOpsGauge, "cn=snmp,cn=monitor"},
+	{"readops", common.ReadOpsGauge, "cn=snmp,cn=monitor"},
+	{"compareops", common.CompareOpsGauge, "cn=snmp,cn=monitor"},
+	{"addentryops", common.AddEntryOpsGauge, "cn=snmp,cn=monitor"},
+	{"modifyentryops", common.ModifyEntryOpsGauge, "cn=snmp,cn=monitor"},
+	{"removeentryops", common.RemoveEntryOpsGauge, "cn=snmp,cn=monitor"},
+	{"modifyrdnops", common.ModifyRDNOpsGauge, "cn=snmp,cn=monitor"},
+	{"searchops", common.SearchOpsGauge, "cn=snmp,cn=monitor"},
+	{"onelevelsearchops", common.OneLevelSearchOpsGauge, "cn=snmp,cn=monitor"},
+	{"wholesubtreesearchops", common.WholeSubtreeSearchOpsGauge, "cn=snmp,cn=monitor"},
+	{"referrals", common.ReferralsGauge, "cn=snmp,cn=monitor"},
+	{"chainings", common.ChainingsGauge, "cn=snmp,cn=monitor"},
+	{"securityerrors", common.SecurityErrorsGauge, "cn=snmp,cn=monitor"},
+	{"errors", common.ErrorsGauge, "cn=snmp,cn=monitor"},
+	{"connections", common.ConnectionsGauge, "cn=snmp,cn=monitor"},
+	{"connectionsinmaxthreads", common.ConnectionsInMaxThreadsGauge, "cn=snmp,cn=monitor"},
+	{"connectionsmaxthreadscount", common.ConnectionsMaxThreadsCountGauge, "cn=snmp,cn=monitor"},
+	{"connectionseq", common.ConnectionsEqGauge, "cn=snmp,cn=monitor"},
+	{"bytesrecv", common.BytesRecvGauge, "cn=snmp,cn=monitor"},
+	{"entriesreturned", common.EntriesReturnedGauge, "cn=snmp,cn=monitor"},
+	{"referralsreturned", common.ReferralsReturnedGauge, "cn=snmp,cn=monitor"},
+	{"supplierentries", common.SupplierEntriesGauge, "cn=snmp,cn=monitor"},
+	{"copyentries", common.CopyEntriesGauge, "cn=snmp,cn=monitor"},
+	{"cacheentries", common.CacheEntriesGauge, "cn=snmp,cn=monitor"},
+	{"cachehits", common.CacheHitsGauge, "cn=snmp,cn=monitor"},
+	{"consumerhits", common.ConsumerHitsGauge, "cn=snmp,cn=monitor"},
 
-	{"anonymousbinds", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "anonymousbinds", gauge)
-	}, common.AnonymousBindsGauge, ""},
-
-	{"unauthbinds", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "unauthbinds", gauge)
-	}, common.UnauthBindsGauge, ""},
-
-	{"simpleauthbinds", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "simpleauthbinds", gauge)
-	}, common.SimpleAuthBindsGauge, ""},
-
-	{"strongauthbinds", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "strongauthbinds", gauge)
-	}, common.StrongAuthBindsGauge, ""},
-
-	{"securityerrors", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "securityerrors", gauge)
-	}, common.SecurityErrorsGauge, ""},
-
-	{"errors", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "errors", gauge)
-	}, common.ErrorsGauge, ""},
-
-	{"connections", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "connections", gauge)
-	}, common.ConnectionsGauge, ""},
-
-	{"bytessent", func(l *ext_ldap.Conn, suffix string, gauge *prometheus.GaugeVec, label string) {
-		ldap.CollectMonitorMetrics(l, "bytessent", gauge)
-	}, common.BytesSentGauge, ""},
+	/* cn=disk space,cn=monitor */
+	{"dsdisk", common.DsDiskGauge, "cn=disk space,cn=monitor"},
 }

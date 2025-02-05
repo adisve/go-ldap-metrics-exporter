@@ -17,14 +17,11 @@ func ScrapeMetrics(config *structs.Config) {
 
 	prometheus.Init()
 
+	log.Infof("scraping metrics from LDAP server %s every %d seconds", config.LDAP.Address, config.Scrape.Interval)
+
 	for range ticker.C {
 		log.Debug("starting metrics scrape")
-		prometheus.ScrapeMetrics(
-			config.LDAP.Address,
-			config.LDAP.User,
-			config.LDAP.Password,
-			config.IPA.Domain,
-		)
+		prometheus.ScrapeMetrics(config)
 	}
 }
 

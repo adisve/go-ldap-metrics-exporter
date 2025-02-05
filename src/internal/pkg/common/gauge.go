@@ -1,55 +1,67 @@
 package common
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 var (
-	UsersGauge  = newGaugeVec("users", "Number of user accounts", []string{"type"})
-	GroupsGauge = newGaugeVec("groups", "Number of groups", nil)
+	/* dn: cn=replication,cn=monitor */
+	ReplicationConflictsGauge = newGaugeVec("replicationconflicts", "Number of ldap conflicts", []string{})
+	ReplicationStatusGauge    = newGaugeVec("replicationstatus", "Replication status by server", []string{"server"})
+	ScrapeCounter             = newGaugeVec("scrapecount", "successful vs unsuccessful ldap scrape attempts", []string{"result"})
+	ScrapeDurationGauge       = newGaugeVec("scrapedurationseconds", "time taken per scrape", []string{})
 
-	ReplicationConflictsGauge = newGaugeVec("replication_conflicts", "Number of ldap conflicts", nil)
-	ReplicationStatusGauge    = newGaugeVec("replication_status", "Replication status by server", []string{"server"})
-	ScrapeCounter             = newCounterVec("scrape_count", "successful vs unsuccessful ldap scrape attempts", []string{"result"})
-	ScrapeDurationGauge       = newGaugeVec("scrape_duration_seconds", "time taken per scrape", nil)
+	/* dn: cn=monitor */
+	CurrentConnectionsGauge             = newGaugeVec("currentconnections", "Current number of connections to the LDAP server", []string{})
+	TotalConnectionsGauge               = newGaugeVec("totalconnections", "Total number of connections to the LDAP server", []string{})
+	CurrentConnectionsAtMaxThreadsGauge = newGaugeVec("currentconnectionsatmaxthreads", "Current number of connections at max threads", []string{})
+	MaxThreadsPerConnHitsGauge          = newGaugeVec("maxthreadsperconnhits", "Max threads per connection", []string{})
+	DTableSizeGauge                     = newGaugeVec("dtablesize", "Size of the dtable", []string{})
+	ReadWaitersGauge                    = newGaugeVec("readwaiters", "Number of read waiters", []string{})
+	OpsInitiatedGauge                   = newGaugeVec("opsinitiated", "Number of operations initiated", []string{})
+	OpsCompletedGauge                   = newGaugeVec("opscompleted", "Number of operations completed", []string{})
+	EntriesSentGauge                    = newGaugeVec("entriessent", "Number of entries sent", []string{})
+	BytesSentGauge                      = newGaugeVec("bytessent", "Number of bytes sent", []string{})
+	CurrentTimeGauge                    = newGaugeVec("currenttime", "Current time", []string{})
+	StartTimeGauge                      = newGaugeVec("starttime", "Start time", []string{})
+	NBackendsGauge                      = newGaugeVec("nbackends", "Number of backends", []string{})
 
-	/* Requires cn=metrics */
-	ReadWaitersGauge                = newGaugeVec("read_waiters", "Number of read waiters", nil)
-	DTableSizeGauge                 = newGaugeVec("dtable_size", "Size of the dtable", nil)
-	AnonymousBindsGauge             = newGaugeVec("anonymous_binds", "Number of anonymous binds", nil)
-	UnauthBindsGauge                = newGaugeVec("unauth_binds", "Number of unauthenticated binds", nil)
-	SimpleAuthBindsGauge            = newGaugeVec("simple_auth_binds", "Number of simple authenticated binds", nil)
-	StrongAuthBindsGauge            = newGaugeVec("strong_auth_binds", "Number of strong authenticated binds", nil)
-	BindSecurityErrorsGauge         = newGaugeVec("bind_security_errors", "Number of bind security errors", nil)
-	InOpsGauge                      = newGaugeVec("in_ops", "Number of incoming operations", nil)
-	ReadOpsGauge                    = newGaugeVec("read_ops", "Number of read operations", nil)
-	CompareOpsGauge                 = newGaugeVec("compare_ops", "Number of compare operations", nil)
-	AddEntryOpsGauge                = newGaugeVec("add_entry_ops", "Number of add entry operations", nil)
-	ModifyEntryOpsGauge             = newGaugeVec("modify_entry_ops", "Number of modify entry operations", nil)
-	RemoveEntryOpsGauge             = newGaugeVec("remove_entry_ops", "Number of remove entry operations", nil)
-	ModifyRDNOpsGauge               = newGaugeVec("modify_rdn_ops", "Number of modify rdn operations", nil)
-	SearchOpsGauge                  = newGaugeVec("search_ops", "Number of search operations", nil)
-	OneLevelSearchOpsGauge          = newGaugeVec("one_level_search_ops", "Number of one level search operations", nil)
-	WholeSubtreeSearchOpsGauge      = newGaugeVec("whole_subtree_search_ops", "Number of whole subtree search operations", nil)
-	ReferralsGauge                  = newGaugeVec("referral_ops", "Number of referral operations", nil)
-	SecurityErrorsGauge             = newGaugeVec("security_errors", "Number of security errors", nil)
-	ErrorsGauge                     = newGaugeVec("errors", "Number of errors", nil)
-	ConnectionsGauge                = newGaugeVec("connections", "Number of connections", nil)
-	ConnectinosInMaxThreadsGauge    = newGaugeVec("connections_in_max_threads", "Number of connections in max threads", nil)
-	ConnectionsEqGauge              = newGaugeVec("connections_eq", "Number of connections eq", nil)
-	ConnectionsInMaxThreadsGauge    = newGaugeVec("connections_in_max_threads", "Number of connections in max threads", nil)
-	ConnectionsMaxThreadsCountGauge = newGaugeVec("connections_max_threads_count", "Number of connections max threads count", nil)
-	BytesRecvGauge                  = newGaugeVec("bytes_recv", "Number of bytes received", nil)
-	EntriesReturnedGauge            = newGaugeVec("entries_returned", "Number of entries returned", nil)
-	ReferralsReturnedGauge          = newGaugeVec("referrals_returned", "Number of referrals returned", nil)
-	CacheEntriesGauge               = newGaugeVec("cache_entries", "Number of cache entries", nil)
-	CacheHitsGauge                  = newGaugeVec("cache_hits", "Number of cache hits", nil)
-	CurrentConnectionsGauge         = newGaugeVec("current_connections", "Current number of connections to the LDAP server", nil)
-	TotalConnectionsGauge           = newGaugeVec("total_connections", "Total number of connections to the LDAP server", nil)
-	EntriesGauge                    = newGaugeVec("entries", "Number of entries in the LDAP server", nil)
-	OperationsCompletedGauge        = newGaugeVec("operations_completed", "Number of operations performed by the LDAP server", nil)
-	OperationsInitiatedGauge        = newGaugeVec("operations_initiated", "Number of operations initiated by the LDAP server", nil)
-	ThreadsGauge                    = newGaugeVec("threads", "Number of threads in the LDAP server", nil)
-	BytesSentGauge                  = newGaugeVec("bytes_sent", "Number of bytes sent by the LDAP server", nil)
-	VersionGauge                    = newGaugeVec("version", "LDAP server version", nil)
+	/* dn: cn=snmp,cn=monitor */
+	AnonymousBindsGauge             = newGaugeVec("anonymousbinds", "Number of anonymous binds", []string{})
+	UnauthBindsGauge                = newGaugeVec("unauthbinds", "Number of unauthenticated binds", []string{})
+	SimpleAuthBindsGauge            = newGaugeVec("simpleauthbinds", "Number of simple authenticated binds", []string{})
+	StrongAuthBindsGauge            = newGaugeVec("strongauthbinds", "Number of strong authenticated binds", []string{})
+	BindSecurityErrorsGauge         = newGaugeVec("bindsecurityerrors", "Number of bind security errors", []string{})
+	InOpsGauge                      = newGaugeVec("inops", "Number of incoming operations", []string{})
+	ListOpsGauge                    = newGaugeVec("listops", "Number of list operations", []string{})
+	ReadOpsGauge                    = newGaugeVec("readops", "Number of read operations", []string{})
+	CompareOpsGauge                 = newGaugeVec("compareops", "Number of compare operations", []string{})
+	AddEntryOpsGauge                = newGaugeVec("addentryops", "Number of add entry operations", []string{})
+	ModifyEntryOpsGauge             = newGaugeVec("modifyentryops", "Number of modify entry operations", []string{})
+	RemoveEntryOpsGauge             = newGaugeVec("removeentryops", "Number of remove entry operations", []string{})
+	ModifyRDNOpsGauge               = newGaugeVec("modifyrdnops", "Number of modify rdn operations", []string{})
+	SearchOpsGauge                  = newGaugeVec("searchops", "Number of search operations", []string{})
+	OneLevelSearchOpsGauge          = newGaugeVec("onelevelsearchops", "Number of one level search operations", []string{})
+	WholeSubtreeSearchOpsGauge      = newGaugeVec("wholesubtreesearchops", "Number of whole subtree search operations", []string{})
+	ReferralsGauge                  = newGaugeVec("referrals", "Number of referral operations", []string{})
+	ChainingsGauge                  = newGaugeVec("chainings", "Number of chaining operations", []string{})
+	SecurityErrorsGauge             = newGaugeVec("securityerrors", "Number of security errors", []string{})
+	ErrorsGauge                     = newGaugeVec("errors", "Number of errors", []string{})
+	ConnectionsGauge                = newGaugeVec("connections", "Number of connections", []string{})
+	ConnectionsInMaxThreadsGauge    = newGaugeVec("connectionsinmaxthreads", "Number of connections at max threads", []string{})
+	ConnectionsMaxThreadsCountGauge = newGaugeVec("connectionsmaxthreadsount", "Max number of connections", []string{})
+	ConnectionsEqGauge              = newGaugeVec("connectionseq", "Number of connections equal", []string{})
+	BytesRecvGauge                  = newGaugeVec("bytesrecv", "Number of bytes received", []string{})
+	EntriesReturnedGauge            = newGaugeVec("entriesreturned", "Number of entries returned", []string{})
+	ReferralsReturnedGauge          = newGaugeVec("referralsreturned", "Number of referrals returned", []string{})
+	SupplierEntriesGauge            = newGaugeVec("supplierentries", "Number of supplier entries", []string{})
+	CopyEntriesGauge                = newGaugeVec("copyentries", "Number of copy entries", []string{})
+	CacheEntriesGauge               = newGaugeVec("cacheentries", "Number of cache entries", []string{})
+	CacheHitsGauge                  = newGaugeVec("cachehits", "Number of cache hits", []string{})
+	ConsumerHitsGauge               = newGaugeVec("consumerhits", "Number of consumer hits", []string{})
+
+	/* dn: cn=disk space,cn=monitor */
+	DsDiskGauge = newGaugeVec("dsdisk", "Disk space used", []string{"partition", "metric_type"})
 )
 
 const (
@@ -62,20 +74,6 @@ const (
 func newGaugeVec(name, help string, labels []string) *prometheus.GaugeVec {
 	return prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Subsystem: subsystem,
-			Name:      name,
-			Help:      help,
-		},
-		labels,
-	)
-}
-
-/**
- * Create a new counter metric with labels.
- */
-func newCounterVec(name, help string, labels []string) *prometheus.CounterVec {
-	return prometheus.NewCounterVec(
-		prometheus.CounterOpts{
 			Subsystem: subsystem,
 			Name:      name,
 			Help:      help,

@@ -2,13 +2,13 @@ package structs
 
 type Config struct {
 	LDAP struct {
-		Address  string `json:"ldap.address"`
-		User     string `json:"user"`
-		Password string `json:"password"`
+		Address    string `json:"address"`
+		Username   string `json:"username"`
+		Password   string `json:"password"`
+		BaseDN     string `json:"baseDn"`
+		UserBaseDN string `json:"userBaseDn"`
+		Port       string `json:"port"`
 	} `json:"ldap"`
-	IPA struct {
-		Domain string `json:"domain"`
-	} `json:"ipa"`
 	Scrape struct {
 		Interval int `json:"interval"`
 	} `json:"scrape"`

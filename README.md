@@ -40,10 +40,10 @@ An example configuration could look like this
     "address": "ldap://localhost", // could also be ldaps://, will use port 389 or 636 respectively
     "username": "<service-user-username>",
     "password": "<service-user-password>",
-    "baseDn": "dc=nonp,dc=dp,dc=dig,dc=nchosting,dc=dk",
+    "baseDn": "dc=local,dc=domain,dc=org",
   },
   "scrape": {
-    "interval": 30 // interval for the server, not the exporter
+    "interval": 30 // interval in seconds to collect metrics
   },
   "server": {
     "active": true,
@@ -55,7 +55,7 @@ An example configuration could look like this
     "json": false
   },
   "export": {
-    "file": "/var/lib/node_exporter/textfile_collector/metrics.prom",
-    "interval": 300
+    "file": "/var/lib/node_exporter/textfile_collector/metrics.prom"
   }
 }
+```

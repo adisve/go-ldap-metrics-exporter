@@ -11,8 +11,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ScrapeMetrics(config *structs.Config) {
-	ticker := time.NewTicker(time.Duration(config.Scrape.Interval))
+func ScrapeMetrics(config *structs.Config, scrapeDone chan<- struct{}) {
+	ticker := time.NewTicker(time.Duration(config.Scrape.Interval) * time.Second)
 	defer ticker.Stop()
 
 	prometheus.Init()
@@ -20,17 +20,15 @@ func ScrapeMetrics(config *structs.Config) {
 	log.Infof("scraping metrics from LDAP server %s every %d seconds", config.LDAP.Address, config.Scrape.Interval)
 
 	for range ticker.C {
-		log.Debug("starting metrics scrape")
+		log.Info("collecting LDAP metrics")
 		prometheus.ScrapeMetrics(config)
+		scrapeDone <- struct{}{}
 	}
 }
 
-func ExportMetrics(exportFile string, exportInterval time.Duration) {
-	ticker := time.NewTicker(exportInterval)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		log.Debug("exporting metrics to file")
+func ExportMetrics(exportFile string, scrapeDone <-chan struct{}) {
+	for range scrapeDone {
+		log.Infof("exporting metrics to file")
 		if err := writeMetrics(exportFile); err != nil {
 			log.Errorf("failed to export metrics: %v", err)
 		}

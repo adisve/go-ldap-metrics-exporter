@@ -2,10 +2,10 @@ package structs
 
 type Config struct {
 	LDAP struct {
-		Address    string `json:"address"`
-		Username   string `json:"username"`
-		Password   string `json:"password"`
-		BaseDN     string `json:"baseDn"`
+		Address  string `json:"address"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		BaseDN   string `json:"baseDn"`
 	} `json:"ldap"`
 	Scrape struct {
 		Interval int `json:"interval"`
@@ -20,7 +20,6 @@ type Config struct {
 		JSON  bool   `json:"json"`
 	} `json:"log"`
 	Export struct {
-		File     string `json:"file"`
-		Interval int    `json:"interval"`
+		File string `json:"file"`
 	} `json:"export"`
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-ldap-metrics-exporter/internal/pkg/app"
 	"go-ldap-metrics-exporter/internal/pkg/structs"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -19,6 +18,10 @@ func Start(config *structs.Config) {
 		defer app.StopServer(metricsServer)
 	}
 
-	go app.ExportMetrics(config.Export.File, time.Duration(config.Export.Interval))
-	app.ScrapeMetrics(config)
+	scrapeDone := make(chan struct{})
+
+	go app.ScrapeMetrics(config, scrapeDone)
+	go app.ExportMetrics(config.Export.File, scrapeDone)
+
+	select {}
 }
